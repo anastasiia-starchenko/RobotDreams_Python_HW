@@ -6,72 +6,57 @@
 # * Овнер може читати і запускати файл
 # * Запускати `dz1_run.py`
 
-import os
 import subprocess
-import datetime
-import random
+import os
 
+if not os.path.exists('dz1.py'):
+    print("File dz1.py was not found!")
+    exit(1)
 
-def run_bash_command(command):
-    try:
-        subprocess.run(command, shell=True, check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error executing command '{command}': {e}")
+try:
+    subprocess.run(['cp', 'dz1.py', 'dz1_run.py'], check=True)
+    print("File dz1.py is successfully copied to dz1_run.py")
+except subprocess.CalledProcessError as e:
+    print(f"Error while coping the file: {e}")
+    exit(1)
 
+prepend_text = "#!/usr/bin/env python3\n# File for execution\n\n"
+try:
+    if not os.path.exists("dz1_run.py"):
+        print("File dz1_run.py was not found!")
+        exit(1)
 
-def get_current_user():
-    return subprocess.run("whoami", capture_output=True, text=True).stdout.strip()
+    with open("dz1_run.py", "r+") as file:
+        original_content = file.read()
+        file.seek(0)
+        file.write(prepend_text + original_content)
+    print("Text is successfully added to the beginning of dz1_run.py")
+except Exception as e:
+    print(f"Error while changing file: {e}")
+    exit(1)
 
+try:
+    if not os.path.exists("dz1_run.py"):
+        print("File dz1_run.py was not found!")
+        exit(1)
 
-def get_current_directory():
-    return subprocess.run("pwd", capture_output=True, text=True).stdout.strip()
+    subprocess.run(['chmod', '700', 'dz1_run.py'], check=True)
+    print("File rights are changed: owner only has access")
+except subprocess.CalledProcessError as e:
+    print(f"Error while changing file rights: {e}")
+    exit(1)
 
+try:
+    if not os.path.exists("dz1_run.py"):
+        print("File dz1_run.py was not found!")
+        exit(1)
 
-def create_directory():
-    dir_name = "dz1"
-    if not os.path.exists(dir_name):
-        run_bash_command(f"mkdir {dir_name}")
+    subprocess.run(['./dz1_run.py'], check=True)
+    print("File dz1_run.py was successfully executed")
+except subprocess.CalledProcessError as e:
+    print(f"Error while executing dz1_run.py: {e}")
+    exit(1)
 
-
-def create_log_files():
-    current_date = datetime.date.today()
-    days_in_month = (datetime.date(current_date.year, current_date.month + 1, 1) -
-                     datetime.date(current_date.year, current_date.month, 1)).days
-
-    for day in range(1, days_in_month + 1):
-        filename = f"dz1/{day:02d}-{current_date.month:02d}-{current_date.year}.log"
-        with open(filename, 'w') as f:
-            f.write(f"Log file for {day:02d}-{current_date.month:02d}-{current_date.year}")
-
-
-def change_owner_to_root():
-    run_bash_command("sudo chown -R root:root dz1")
-
-
-def delete_random_files():
-    files = os.listdir("dz1")
-    random_files = random.sample(files, min(5, len(files)))
-    for file in random_files:
-        os.remove(os.path.join("dz1", file))
-        print(f"Deleted file: dz1/{file}")
-
-
-def main():
-
-    user = get_current_user()
-    print(f"Current user: {user}")
-
-    current_dir = get_current_directory()
-    print(f"Current directory: {current_dir}")
-
-    create_directory()
-
-    create_log_files()
-
-    change_owner_to_root()
-
-    delete_random_files()
-
-
-if __name__ == "__main__":
-    main()
+except Exception as e:
+    print(f"Unknown error: {e}")
+    exit(1)
