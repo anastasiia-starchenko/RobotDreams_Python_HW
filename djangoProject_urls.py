@@ -31,4 +31,3 @@ urlpatterns = [
     path('about/', include('about.urls')),  
     path('', home, name='home'),
 ]
-Footer
