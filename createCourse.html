@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <h1>Create Course</h1>
+    <form method="POST">
+        <label for="name">Course Name:</label>
+        <input type="text" name="name" required><br>
+
+        <label for="teacher_id">Teacher ID:</label>
+        <input type="number" name="teacher_id" required><br>
+
+        <label for="student_ids">Student IDs (comma-separated):</label>
+        <input type="text" name="student_ids" placeholder="1,2,3,4"><br>
+
+        <button type="submit">Create Course</button>
+    </form>
+{% endblock %}
