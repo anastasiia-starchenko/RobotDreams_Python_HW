@@ -1,44 +1,34 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import login, logout, authenticate
-from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Course, Lecture
+from .forms import CourseForm, LectureForm
 
-# Головна сторінка
-def home(request):
-    return render(request, 'home.html')
+def course_list(request):
+    courses = Course.objects.all()
+    return render(request, 'myapp/course_list.html', {'courses': courses})
 
-# Сторінка реєстрації
-def register(request):
+
+def course_detail(request, pk):
+    course = get_object_or_404(Course, pk=pk)
+    return render(request, 'myapp/course_detail.html', {'course': course})
+
+
+def add_course(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CourseForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, 'Реєстрація успішна!')
-            return redirect('home')
-        else:
-            messages.error(request, 'Виникла помилка при реєстрації.')
+            form.save()
+            return redirect('course_list')
     else:
-        form = UserCreationForm()
-    return render(request, 'register.html', {'form': form})
+        form = CourseForm()
+    return render(request, 'myapp/add_course.html', {'form': form})
 
-# Сторінка логіну
-def user_login(request):
+
+def add_lecture(request):
     if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
+        form = LectureForm(request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            messages.success(request, 'Вхід виконано успішно!')
-            return redirect('home')
-        else:
-            messages.error(request, 'Невірні дані для входу.')
+            form.save()
+            return redirect('course_list')
     else:
-        form = AuthenticationForm()
-    return render(request, 'login.html', {'form': form})
-
-# Логаут
-def user_logout(request):
-    logout(request)
-    messages.success(request, 'Ви вийшли із системи.')
-    return redirect('home')
+        form = LectureForm()
+    return render(request, 'myapp/add_lecture.html', {'form': form})
