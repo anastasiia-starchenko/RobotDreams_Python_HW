@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Реєстрація</title>
+    <title>Логін</title>
 </head>
 <body>
-    <h1>Реєстрація</h1>
+    <h1>Вхід</h1>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Зареєструватися</button>
+        <button type="submit">Увійти</button>
     </form>
     <a href="{% url 'home' %}">На головну</a>
 </body>

@@ -1,28 +1,44 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login, logout, authenticate
+from django.contrib import messages
 
-from django.http import JsonResponse
-from django.utils.timezone import now
+# Головна сторінка
+def home(request):
+    return render(request, 'home.html')
 
-
-def whoami(request):
-    client_ip = get_client_ip(request)
-
-    client_browser = request.META.get('HTTP_USER_AGENT', 'Unknown')
-
-    current_time = now()
-
-    return JsonResponse({
-        'browser': client_browser,
-        'ip': client_ip,
-        'server_time': current_time.strftime('%Y-%m-%d %H:%M:%S'),
-    })
-
-
-def get_client_ip(request):
-
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
+# Сторінка реєстрації
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Реєстрація успішна!')
+            return redirect('home')
+        else:
+            messages.error(request, 'Виникла помилка при реєстрації.')
     else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
+        form = UserCreationForm()
+    return render(request, 'register.html', {'form': form})
+
+# Сторінка логіну
+def user_login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            messages.success(request, 'Вхід виконано успішно!')
+            return redirect('home')
+        else:
+            messages.error(request, 'Невірні дані для входу.')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
+
+# Логаут
+def user_logout(request):
+    logout(request)
+    messages.success(request, 'Ви вийшли із системи.')
+    return redirect('home')
