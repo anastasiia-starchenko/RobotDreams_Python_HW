@@ -1,51 +1,27 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
-from django.contrib import messages
-from .forms import RegistrationForm, LoginForm
-from .models import Course, Rating
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
+from .models import Course
 
+def home(request):
+    return render(request, 'myapp/home.html')
 
-def register(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Ви успішно зареєструвались!')
-            return redirect('login')
-    else:
-        form = RegistrationForm()
-    return render(request, 'myapp/register.html', {'form': form})
-
-
-def login_view(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('courses_list')
-            else:
-                messages.error(request, 'Невірний логін чи пароль')
-    else:
-        form = LoginForm()
-    return render(request, 'myapp/login.html', {'form': form})
-
-
-def courses_list(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-
-
+def course_list(request):
     courses = Course.objects.all()
+    course_data = [{'id': course.id, 'title': course.title, 'description': course.description} for course in courses]
+    return JsonResponse(course_data, safe=False)
 
+def course_detail(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    lectures = [{'title': lecture.title, 'content': lecture.content} for lecture in course.lectures.all()]
+    assignments = [{'title': assignment.title, 'description': assignment.description, 'due_date': assignment.due_date}
+                   for assignment in course.assignments.all()]
+    students = [{'name': student.name, 'email': student.email} for student in course.students.all()]
 
-    ratings = Rating.objects.filter(user=request.user)
-
-
-    return render(request, 'myapp/courses_list.html', {
-        'courses': courses,
-        'ratings': ratings
-    })
+    course_data = {
+        'title': course.title,
+        'description': course.description,
+        'lectures': lectures,
+        'assignments': assignments,
+        'students': students
+    }
+    return JsonResponse(course_data)
