@@ -8,11 +8,16 @@
     <ul>
         {% for course in courses %}
             <li>
-                {{ course.name }} - Рейтинг:
+                <strong>{{ course.title }}</strong> - Опис: {{ course.description }}<br>
+
+
+                Рейтинг:
                 {% for rating in ratings %}
                     {% if rating.course == course %}
-                        {{ rating.grade }}
+                        {{ rating.rating }} ({{ rating.comment }})<br>
                     {% endif %}
+                {% empty %}
+                    Немає рейтингу для цього курсу.
                 {% endfor %}
             </li>
         {% endfor %}
