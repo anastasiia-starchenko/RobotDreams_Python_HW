@@ -1,34 +1,51 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Course, Lecture
-from .forms import CourseForm, LectureForm
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate
+from django.contrib import messages
+from .forms import RegistrationForm, LoginForm
+from .models import Course, Rating
 
-def course_list(request):
+
+def register(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Ви успішно зареєструвались!')
+            return redirect('login')
+    else:
+        form = RegistrationForm()
+    return render(request, 'myapp/register.html', {'form': form})
+
+
+def login_view(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('courses_list')
+            else:
+                messages.error(request, 'Невірний логін чи пароль')
+    else:
+        form = LoginForm()
+    return render(request, 'myapp/login.html', {'form': form})
+
+
+def courses_list(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+
     courses = Course.objects.all()
-    return render(request, 'myapp/course_list.html', {'courses': courses})
 
 
-def course_detail(request, pk):
-    course = get_object_or_404(Course, pk=pk)
-    return render(request, 'myapp/course_detail.html', {'course': course})
+    ratings = Rating.objects.filter(user=request.user)
 
 
-def add_course(request):
-    if request.method == 'POST':
-        form = CourseForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('course_list')
-    else:
-        form = CourseForm()
-    return render(request, 'myapp/add_course.html', {'form': form})
-
-
-def add_lecture(request):
-    if request.method == 'POST':
-        form = LectureForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('course_list')
-    else:
-        form = LectureForm()
-    return render(request, 'myapp/add_lecture.html', {'form': form})
+    return render(request, 'myapp/courses_list.html', {
+        'courses': courses,
+        'ratings': ratings
+    })
