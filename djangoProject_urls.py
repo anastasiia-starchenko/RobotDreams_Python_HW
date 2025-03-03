@@ -1,8 +1,8 @@
 from django.contrib import admin
-from django.urls import path
-from django.shortcuts import redirect
+from django.urls import path, include
 
 urlpatterns = [
-    path('', lambda request: redirect('admin/')),
     path('admin/', admin.site.urls),
+    path('courses/', include('myapp.urls')),
+    path('', include('myapp.urls')),
 ]

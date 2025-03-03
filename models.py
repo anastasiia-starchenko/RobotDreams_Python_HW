@@ -1,34 +1,44 @@
 from django.db import models
-from django.utils import timezone
+from django.contrib.auth.models import User
 
 class Course(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return self.name
-
-class Student(models.Model):
-    name = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.name
-
-class Assignment(models.Model):
     title = models.CharField(max_length=200)
-    course = models.ForeignKey(Course, related_name='assignments', on_delete=models.CASCADE, default=1)
-    student = models.ForeignKey(Student, related_name='assignments', on_delete=models.CASCADE, default=1)
-    due_date = models.DateField()
+    description = models.TextField()
+    teacher = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='teaching_courses'
+    )
 
     def __str__(self):
         return self.title
 
 
+class Student(models.Model):
+    name = models.CharField(max_length=200)
+    email = models.EmailField(unique=True)
+    courses = models.ManyToManyField(Course, related_name='students')
+
+    def __str__(self):
+        return self.name
+
+
 class Lecture(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="lectures")
-    title = models.CharField(max_length=255)
-    content = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lectures')
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+
+class Assignment(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='assignments')
+    title = models.CharField(max_length=200)
+    due_date = models.DateField()
+    description = models.TextField()
 
     def __str__(self):
         return self.title
