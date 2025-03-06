@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Список курсів</title>
+</head>
+<body>
+    <h1>Список курсів</h1>
+    <form method="get">
+        {{ filter.form.as_p }}
+        <button type="submit">Фільтрувати</button>
+    </form>
+    <ul>
+        {% for course in courses %}
+            <li>
+                <strong>{{ course.name }}</strong><br>
+                Викладач: {{ course.teacher.username }}<br>
+                Дата початку: {{ course.start_date|date:"Y-m-d" }}<br>
+                Теги: {{ course.tags|join:", " }}<br>
+                <a href="{% url 'student_list' course.id %}">Переглянути студентів</a>
+            </li>
+        {% empty %}
+            <li>Немає курсів.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
