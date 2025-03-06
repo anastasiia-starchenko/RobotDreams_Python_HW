@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ваші курси</title>
+</head>
+<body>
+    <h2>Ваші курси та рейтинг</h2>
+    <ul>
+        {% for course in courses %}
+            <li>
+                <strong>{{ course.title }}</strong> - Опис: {{ course.description }}<br>
+
+
+                Рейтинг:
+                {% for rating in ratings %}
+                    {% if rating.course == course %}
+                        {{ rating.rating }} ({{ rating.comment }})<br>
+                    {% endif %}
+                {% empty %}
+                    Немає рейтингу для цього курсу.
+                {% endfor %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
