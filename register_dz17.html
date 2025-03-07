@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Реєстрація</title>
 </head>
 <body>
-    <h1>Реєстрація користувача</h1>
+    <h2>Реєстрація</h2>
+
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
