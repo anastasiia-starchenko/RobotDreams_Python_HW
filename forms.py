@@ -1,29 +1,16 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser
-from .models import Course
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
 
 
-class CourseRegistrationForm(forms.Form):
-    course = forms.ModelChoiceField(queryset=Course.objects.all(), label="Оберіть курс")
+User = get_user_model()
 
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = CustomUser
-        fields = ['profile_picture']
 
-class RegisterForm(forms.ModelForm):
-    class Meta:
-        model = CustomUser
-        fields = ['username', 'password', 'email']
-
-class RegistrationForm(UserCreationForm):
-    email = forms.EmailField()
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
 
     class Meta:
-        model = CustomUser
+        model = User
         fields = ['username', 'email', 'password1', 'password2']
-
-class LoginForm(forms.Form):
-    username = forms.CharField(max_length=100)
-    password = forms.CharField(widget=forms.PasswordInput)
