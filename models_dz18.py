@@ -5,19 +5,6 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 
-class Lesson(models.Model):
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-
-
-class Homework(models.Model):
-    lesson = models.ForeignKey('Lesson', on_delete=models.CASCADE)
-    student = models.ForeignKey('Student', on_delete=models.CASCADE)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Homework by {self.student} for {self.lesson}"
 
 def get_default_teacher():
     teacher = Teacher.objects.first()
