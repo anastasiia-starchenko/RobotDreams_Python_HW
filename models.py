@@ -1,34 +1,49 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils import timezone
+import uuid
+from django.conf import settings
 
-class Course(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
+
+def get_default_teacher():
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    return User.objects.filter(is_staff=True).first()
+
+
+class CustomUser(AbstractUser):
+    email_confirmed = models.BooleanField(default=False)
+    confirmation_token = models.UUIDField(default=uuid.uuid4, unique=True)
+
+
+class Teacher(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.user.username
+
 
 class Student(models.Model):
-    name = models.CharField(max_length=200)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    course = models.ForeignKey("Course", on_delete=models.CASCADE)
+    total_score = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.name
-
-class Assignment(models.Model):
-    title = models.CharField(max_length=200)
-    course = models.ForeignKey(Course, related_name='assignments', on_delete=models.CASCADE, default=1)
-    student = models.ForeignKey(Student, related_name='assignments', on_delete=models.CASCADE, default=1)
-    due_date = models.DateField()
-
-    def __str__(self):
-        return self.title
+        return self.user.username
 
 
-class Lecture(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="lectures")
+class Course(models.Model):
     title = models.CharField(max_length=255)
-    content = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField()
+    start_date = models.DateField()
+    teacher = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        default=get_default_teacher,
+        verbose_name="Викладач"
+    )
 
     def __str__(self):
         return self.title

@@ -1,13 +1,16 @@
 from django import forms
-from .models import Course, Lecture
+from .models import CustomUser
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
 
-class CourseForm(forms.ModelForm):
+
+User = get_user_model()
+
+
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
     class Meta:
-        model = Course
-        fields = ['name', 'description']
-
-
-class LectureForm(forms.ModelForm):
-    class Meta:
-        model = Lecture
-        fields = ['course', 'title', 'content']
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
