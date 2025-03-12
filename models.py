@@ -1,32 +1,47 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
-from django.utils import timezone
-from django.contrib.auth.models import User
 
 
-class Lesson(models.Model):
-    title = models.CharField(max_length=255)
-    description = models.TextField()
+class CustomUserManager(BaseUserManager):
+    def create_user(self, username, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("Email field is required")
+        if not username:
+            raise ValueError("Username field is required")
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        return self.create_user(username, email, password, **extra_fields)
 
 
-class Homework(models.Model):
-    lesson = models.ForeignKey('Lesson', on_delete=models.CASCADE)
-    student = models.ForeignKey('Student', on_delete=models.CASCADE)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+class CustomUser(AbstractUser):
+    ROLE_CHOICES = (
+        ('student', 'Student'),
+        ('teacher', 'Teacher'),
+        ('admin', 'Admin'),
+    )
+    email = models.EmailField(unique=True)
+    full_name = models.CharField(max_length=255)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student')
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
+
+    objects = CustomUserManager()
 
     def __str__(self):
-        return f"Homework by {self.student} for {self.lesson}"
+        return f"{self.username} ({self.email})"
 
-def get_default_teacher():
-    teacher = Teacher.objects.first()
-    if teacher:
-        return teacher
-    return None
 
 class Teacher(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     bio = models.TextField()
 
     def __str__(self):
@@ -35,9 +50,11 @@ class Teacher(models.Model):
 
 class Course(models.Model):
     title = models.CharField(max_length=100)
+    name = models.CharField(max_length=255, default="Без назви")
+    students = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="courses")
     start_date = models.DateField()
     description = models.TextField(blank=True, null=True)
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, default=get_default_teacher)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     end_date = models.DateField()
 
     def __str__(self):
@@ -45,24 +62,31 @@ class Course(models.Model):
 
 
 class Student(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     total_score = models.IntegerField(default=0)
     full_name = models.CharField(max_length=100, default='Anonymous')
-    email = models.EmailField(default='example@example.com')
 
     def __str__(self):
         return self.user.username
 
 
-class CustomUser(AbstractUser):
-    email = models.EmailField(unique=True)
-    full_name = models.CharField(max_length=255, blank=True)
-
-    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
+class Lesson(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
 
     def __str__(self):
-        return self.username
+        return self.title
+
+
+class Homework(models.Model):
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Homework by {self.student} for {self.lesson}"
 
 
 class Tag(models.Model):

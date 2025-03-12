@@ -4,21 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вхід</title>
+    <style>
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Вхід</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
+    <div>
+        <h2>Вхід</h2>
+
+        {% if form.non_field_errors %}
+            <div class="error">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Увійти</button>
+        </form>
+
         <div>
-            <label for="id_email">Email:</label>
-            <input type="email" name="email" id="id_email" required>
+            <p>Ще не маєте акаунта? <a href="{% url 'register' %}">Зареєструйтесь</a></p>
+            <p><a href="{% url 'password_reset' %}">Забули пароль?</a></p>
         </div>
-        <div>
-            <label for="id_password">Пароль:</label>
-            <input type="password" name="password" id="id_password" required>
-        </div>
-        <button type="submit">Увійти</button>
-    </form>
+    </div>
 </body>
 </html>
