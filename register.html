@@ -1,17 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Реєстрація</title>
-</head>
-<body>
-    <h1>Реєстрація</h1>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Зареєструватися</button>
-    </form>
-    <a href="{% url 'home' %}">На головну</a>
-</body>
-</html>
+<form method="POST" action="{% url 'register' %}">
+    {% csrf_token %}
+
+    <div>
+        <label for="id_username">Ім'я користувача</label>
+        <input type="text" name="username" id="id_username" required autocomplete="username">
+    </div>
+
+    <div>
+        <label for="id_email">Email</label>
+        <input type="email" name="email" id="id_email" required autocomplete="email">
+    </div>
+
+    <div>
+        <label for="id_password1">Пароль</label>
+        <input type="password" name="password1" id="id_password1" required autocomplete="new-password">
+    </div>
+
+    <div>
+        <label for="id_password2">Повторіть пароль</label>
+        <input type="password" name="password2" id="id_password2" required autocomplete="new-password">
+    </div>
+
+    <button type="submit">Зареєструватися</button>
+</form>
