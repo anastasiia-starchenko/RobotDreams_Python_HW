@@ -5,15 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вхід</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
         .error {
             color: red;
             font-size: 14px;
             margin-bottom: 15px;
         }
+
+        .links {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .links a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <div>
+    <div class="container">
         <h2>Вхід</h2>
 
         {% if form.non_field_errors %}
@@ -30,7 +90,7 @@
             <button type="submit">Увійти</button>
         </form>
 
-        <div>
+        <div class="links">
             <p>Ще не маєте акаунта? <a href="{% url 'register' %}">Зареєструйтесь</a></p>
             <p><a href="{% url 'password_reset' %}">Забули пароль?</a></p>
         </div>
