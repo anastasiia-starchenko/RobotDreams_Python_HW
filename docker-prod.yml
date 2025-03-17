@@ -1,0 +1,48 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: gunicorn myapp.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=myapp.settings
+    depends_on:
+      - db
+    networks:
+      - app-network
+    expose:
+      - 8000
+
+  nginx:
+    image: nginx:latest
+    container_name: djangoproject-nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./static:/app/static
+      - ./media:/app/media
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+    networks:
+      - app-network
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: myapp_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  pgdata:
