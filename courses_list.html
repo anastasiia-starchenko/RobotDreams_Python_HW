@@ -1,25 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
-    <title>Ваші курси</title>
+    <meta charset="UTF-8">
+    <title>Список курсів</title>
 </head>
 <body>
-    <h2>Ваші курси та рейтинг</h2>
+    <h1>Список курсів</h1>
+    <form method="get">
+        {{ filter.form.as_p }}
+        <button type="submit">Фільтрувати</button>
+    </form>
     <ul>
         {% for course in courses %}
             <li>
-                <strong>{{ course.title }}</strong> - Опис: {{ course.description }}<br>
-
-
-                Рейтинг:
-                {% for rating in ratings %}
-                    {% if rating.course == course %}
-                        {{ rating.rating }} ({{ rating.comment }})<br>
-                    {% endif %}
-                {% empty %}
-                    Немає рейтингу для цього курсу.
-                {% endfor %}
+                <strong>{{ course.name }}</strong><br>
+                Викладач: {{ course.teacher.username }}<br>
+                Дата початку: {{ course.start_date|date:"Y-m-d" }}<br>
+                Теги: {{ course.tags|join:", " }}<br>
+                <a href="{% url 'student_list' course.id %}">Переглянути студентів</a>
             </li>
+        {% empty %}
+            <li>Немає курсів.</li>
         {% endfor %}
     </ul>
 </body>

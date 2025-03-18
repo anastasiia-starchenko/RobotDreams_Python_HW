@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ course.name }}</title>
+</head>
+<body>
+    <h1>{{ course.name }}</h1>
+    <p>Викладач: {{ course.teacher.name }}</p>
+    <p>Дата старту: {{ course.start_date }}</p>
+    <p>Теги: {{ course.tags|join:", " }}</p>
+
+    <h2>Реєстрація на курс</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Зареєструватися</button>
+    </form>
+</body>
+</html>
