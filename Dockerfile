@@ -1,13 +1,13 @@
-FROM python:3.9-slim
+FROM python:3.11
 
-RUN pip install --upgrade pip setuptools
+WORKDIR /app
 
-WORKDIR /src
+COPY requirements.txt .
 
-COPY . /src
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN ls /src
+COPY . /app
 
-RUN pip install -r requirements.txt
+ENV DJANGO_SETTINGS_MODULE=myapp.settings
 
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "myapp.wsgi:application"]
