@@ -1,13 +1,16 @@
 from django import forms
-from .models import Course, Lecture
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
-class CourseForm(forms.ModelForm):
+
+class RegistrationForm(UserCreationForm):
+    email = forms.EmailField()
+
     class Meta:
-        model = Course
-        fields = ['name', 'description']
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
 
 
-class LectureForm(forms.ModelForm):
-    class Meta:
-        model = Lecture
-        fields = ['course', 'title', 'content']
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=100)
+    password = forms.CharField(widget=forms.PasswordInput)
