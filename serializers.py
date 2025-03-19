@@ -1,25 +1,22 @@
 from rest_framework import serializers
-from .models import Course, Student, StudentPerformance
-from myapp.models import Homework
-
-
-class HomeworkSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Homework
-        fields = '__all__'
-
+from .models import Course, Rating, Assignment, Submission
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
-        fields = ['id', 'name', 'title', 'start_date', 'description', 'teacher']
+        fields = '__all__'
 
-class StudentSerializer(serializers.ModelSerializer):
+class RatingSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Student
-        fields = ['id', 'user', 'course', 'total_score', 'full_name', 'email']
+        model = Rating
+        fields = '__all__'
 
-class StudentPerformanceSerializer(serializers.ModelSerializer):
+class AssignmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = StudentPerformance
-        fields = ['id', 'student', 'course', 'score']
+        model = Assignment
+        fields = '__all__'
+
+class SubmissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Submission
+        fields = '__all__'
