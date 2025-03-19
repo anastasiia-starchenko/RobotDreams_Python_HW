@@ -1,35 +1,25 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Реєстрація</title>
-</head>
-<body>
-    <h2>Реєстрація</h2>
-    <form method="POST">
-        {% csrf_token %}
-        <div>
-            <label for="id_username">Ім'я користувача:</label>
-            <input type="text" name="username" id="id_username" required maxlength="150">
-            <small>Необхідно: 150 або менше символів. тільки букви, цифри та знаки @/./+/-/_.</small>
-        </div>
-        <div>
-            <label for="id_email">Email:</label>
-            <input type="email" name="email" id="id_email" required>
-        </div>
-        <div>
-            <label for="id_password">Пароль:</label>
-            <input type="password" name="password" id="id_password" required minlength="8">
-            <small>Ваш пароль повинен містити як мінімум 8 символів. Пароль не може бути надто схожим на іншу особисту інформацію.</small>
-        </div>
-        <div>
-            <label for="id_confirm_password">Підтвердження пароля:</label>
-            <input type="password" name="confirm_password" id="id_confirm_password" required>
-            <small>Введіть той же пароль, що і раніше, для підтвердження.</small>
-        </div>
-        <button type="submit">Зареєструватися</button>
-    </form>
-</body>
-</html>
+<form method="POST" action="{% url 'register' %}">
+    {% csrf_token %}
 
+    <div>
+        <label for="id_username">Ім'я користувача</label>
+        <input type="text" name="username" id="id_username" required autocomplete="username">
+    </div>
+
+    <div>
+        <label for="id_email">Email</label>
+        <input type="email" name="email" id="id_email" required autocomplete="email">
+    </div>
+
+    <div>
+        <label for="id_password1">Пароль</label>
+        <input type="password" name="password1" id="id_password1" required autocomplete="new-password">
+    </div>
+
+    <div>
+        <label for="id_password2">Повторіть пароль</label>
+        <input type="password" name="password2" id="id_password2" required autocomplete="new-password">
+    </div>
+
+    <button type="submit">Зареєструватися</button>
+</form>

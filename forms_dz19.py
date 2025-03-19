@@ -9,10 +9,6 @@ from django.contrib.auth.forms import AuthenticationForm
 class EmailAuthenticationForm(AuthenticationForm):
     username = forms.EmailField()
 
-    def confirm_login_allowed(self, user):
-        if not user.is_active:
-            raise forms.ValidationError("This account is inactive.", code='inactive')
-
     def clean_username(self):
         email = self.cleaned_data.get('username')
         try:
@@ -25,11 +21,11 @@ class EmailAuthenticationForm(AuthenticationForm):
 User = get_user_model()
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
+    email = forms.EmailField()
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'email')
+        fields = ('username', 'email', 'password1', 'password2')
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
