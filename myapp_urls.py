@@ -1,8 +1,10 @@
 from django.urls import path
-from .views import register, confirm_email, email_confirmation_message
+from myapp import views
 
 urlpatterns = [
-    path('register/', register, name='register'),
-    path('accounts/confirm/<uuid:token>/', confirm_email, name='confirm_email'),
-    path('email_confirmation_message/', email_confirmation_message, name='email_confirmation_message'),
+    path('registration_success/', views.registration_success, name='registration_success'),
+    path('', views.home, name='home'),
+    path('login/', views.login_view, name='login'),
+    path('register/', views.register, name='register'),
+    path('reset/<uidb64>/<token>/', views.password_reset, name='password_reset'),
 ]
