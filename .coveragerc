@@ -1,0 +1,17 @@
+[run]
+branch = True
+
+[report]
+show_missing = True
+skip_covered = True
+print_summary = True
+omit =
+    */migrations/*
+    */tests/*
+    */admin.py
+    */apps.py
+    */models.py
+    */views.py
+
+[coverage:report]
+fail_under = 83  # Встановити target coverage на 83%
