@@ -9,3 +9,10 @@ SQLALCHEMY_DATABASE_URL = "postgresql://anastasiiastarchenko:Qwerty@localhost:54
 engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
